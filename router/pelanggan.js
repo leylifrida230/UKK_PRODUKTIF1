@@ -8,8 +8,13 @@ const pelanggan = require('../models/index').pelanggan
 //middleware req body
 app.use(express.urlencoded({ extended: true }))
 
-app.get('/', async (req,res) => {
-    pelanggan.findAll() //get data
+// auth
+const verifyToken = require('./verifyToken')
+
+app.get('/', verifyToken, async (req,res) => {
+    pelanggan.findAll({
+        include:[{ all: true, nested: true }]
+    }) //get data
     .then(result => {
         res.json(result)
     })
@@ -43,7 +48,7 @@ app.post('/', async (req,res) => {
     })
 })
 
-app.put('/', async (req,res) => {
+app.put('/', verifyToken, async (req,res) => {
     let param = { id_pelanggan : req.body.id_pelanggan }
     let data = {
         username : req.body.username,
@@ -67,7 +72,7 @@ app.put('/', async (req,res) => {
     })
 })
 
-app.delete('/:id_pelanggan', async (req,res) => {
+app.delete('/:id_pelanggan', verifyToken, async (req,res) => {
     let id_pelanggan = req.params.id_pelanggan //variabel
     //object
     let param = {

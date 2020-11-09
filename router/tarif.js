@@ -7,8 +7,14 @@ const tarif = require('../models/index').tarif
 //middleware req body
 app.use(express.urlencoded({ extended: true }))
 
+// auth
+const verifyToken = require('./verifyToken')
+app.use(verifyToken)
+
 app.get('/', async (req,res) => {
-    tarif.findAll() //get data
+    tarif.findAll({
+        include:[{ all: true, nested: true }]
+    }) //get data
     .then(result => {
         res.json(result)
     })

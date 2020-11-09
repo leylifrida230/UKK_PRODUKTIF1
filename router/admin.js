@@ -8,9 +8,12 @@ const admin = require('../models/index').admin
 //middleware req body
 app.use(express.urlencoded({ extended: true }))
 
-app.get('/', async (req,res) => {
+// auth
+const verifyToken = require('./verifyToken')
+
+app.get('/', verifyToken, async (req,res) => {
     admin.findAll({
-        include: ['level']
+        include:[{ all: true, nested: true }]
     }) //get data
     .then(result => {
         res.json(result)
@@ -43,7 +46,7 @@ app.post('/', async (req,res) => {
     })
 })
 
-app.put('/', async (req,res) => {
+app.put('/', verifyToken, async (req,res) => {
     let param = { id_admin : req.body.id_admin }
     let data = {
         username: req.body.username,
@@ -65,7 +68,7 @@ app.put('/', async (req,res) => {
     })
 })
 
-app.delete('/:id_admin', async (req,res) => {
+app.delete('/:id_admin', verifyToken, async (req,res) => {
     let id_admin = req.params.id_admin //variabel
     //object
     let param = {

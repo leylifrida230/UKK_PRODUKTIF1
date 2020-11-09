@@ -33,8 +33,11 @@ const storage = multer.diskStorage({
     }
 })
 
-let upload = multer({storage: storage})
+const upload = multer({storage: storage})
 
+// auth
+const verifyToken = require('./verifyToken')
+app.use(verifyToken)
 
 app.get('/', async (req,res) => {
     pembayaran.findAll({
@@ -58,7 +61,7 @@ app.post('/', upload.single('bukti'), async (req,res) => {
         bulan_bayar: req.body.bulan_bayar,
         biaya_admin: req.body.biaya_admin,
         total_bayar: req.body.total_bayar,
-        status: req.body.status,
+        status: false,
         bukti: req.file.filename,
         id_admin: req.body.id_admin
     }

@@ -7,8 +7,14 @@ const level = require('../models/index').level
 //middleware req body
 app.use(express.urlencoded({ extended: true }))
 
+// auth
+const verifyToken = require('./verifyToken')
+app.use(verifyToken)
+
 app.get('/', async (req,res) => {
-    level.findAll() //get data
+    level.findAll({
+        include:[{ all: true, nested: true }]
+    }) //get data
     .then(result => {
         res.json(result)
     })
